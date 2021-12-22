@@ -1,3 +1,3 @@
 # bitburner
 
-Random scripts for BitBurner.
+Random scripts for bitburner.
