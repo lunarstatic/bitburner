@@ -1,0 +1,111 @@
+
+var servs16 = ["foodnstuff",
+                    "sigma-cosmetics",
+                    "joesguns",
+                    "nectar-net",
+                    "hong-fang-tea",
+                    "harakiri-sushi"
+                    ];
+
+
+var servs32 = ["neo-net",
+                    "zer0",
+                    "max-hardware",
+                    "iron-gym",
+                    "phantasy",
+                    "omega-net",
+                    "the-hub",
+                    "unitalife"
+                    ];
+
+var servs64 = ["silver-helix",
+                    "rho-construction",
+                    "netlink",
+                    "alpha-ent",
+                    "solaris",
+                    
+                    "run4theh111z",
+                    "rothman-uni"
+                    ];
+
+var servs128 = ["catalyst",
+                    "avmnite-02h",
+                    "titan-labs",
+                    "zb-institute",
+                    "omnitek",
+                    "univ-energy"
+                    ];
+
+var servs256 = ["I.I.I.I"];
+
+var servs512 = ["fulcrumtech"];
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+for (var i = 0; i < servs16.length; ++i) {
+    var serv = servs16[i];
+
+    scp("1337.script", serv);
+    brutessh(serv);
+    nuke(serv);
+    exec("1337.script", serv, 6);
+}
+
+for (var i = 0; i < servs32.length; ++i) {
+    var serv = servs32[i];
+
+    scp("1337.script", serv);
+    brutessh(serv);
+    ftpcrack(serv);
+    httpworm(serv);
+    relaysmtp(serv);
+    nuke(serv);
+    exec("1337.script", serv, 13);
+}
+
+for (var i = 0; i < servs64.length; ++i) {
+    var serv = servs64[i];
+
+    scp("1337.script", serv);
+    brutessh(serv);
+    ftpcrack(serv);
+    httpworm(serv);
+    relaysmtp(serv);
+    nuke(serv);
+    exec("1337.script", serv, 26);
+}
+
+for (var i = 0; i < servs128.length; ++i) {
+    var serv = servs128[i];
+
+    scp("1337.script", serv);
+    brutessh(serv);
+    ftpcrack(serv);
+    httpworm(serv);
+    relaysmtp(serv);
+    nuke(serv);
+    exec("1337.script", serv, 52);
+}
+
+for (var i = 0; i < servs256.length; ++i) {
+    var serv = servs256[i];
+
+    scp("1337.script", serv);
+    brutessh(serv);
+    ftpcrack(serv);
+    httpworm(serv);
+    relaysmtp(serv);
+    nuke(serv);
+    exec("1337.script", serv, 104);
+}
+
+for (var i = 0; i < servs512.length; ++i) {
+    var serv = servs512[i];
+
+    scp("1337.script", serv);
+    brutessh(serv);
+    ftpcrack(serv);
+    httpworm(serv);
+    relaysmtp(serv);
+    nuke(serv);
+    exec("1337.script", serv, 208);
+}
