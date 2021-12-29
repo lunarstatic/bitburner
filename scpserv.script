@@ -1,0 +1,20 @@
+//Copies current hack script to all private servers.
+//8190
+
+var i = 0;
+
+
+while (i <= 24) {
+
+        var hostname = ("magi-" + i);
+        var maxram = getServerMaxRam(hostname);
+        scriptKill("1337.script", hostname);
+        rm("1337.script", hostname);
+        tprint("Removing old script from: " + hostname);
+        scp("1337.script", hostname);
+        tprint("Copying new script to: " + hostname);
+        exec("1337.script", hostname, maxram/2.45);
+        tprint("Initializing new script on: " + hostname);
+        ++i;
+    
+}
