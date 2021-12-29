@@ -1,0 +1,12 @@
+var i = 0;
+
+
+while (i < getPurchasedServerLimit()) {
+    
+        var hostname = "magi-" + i;
+        var maxram = 1048576;
+
+        purchaseServer(hostname, maxram);
+        
+        ++i;
+        }
