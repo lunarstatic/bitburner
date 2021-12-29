@@ -1,0 +1,9 @@
+var i=0;
+
+while(i <= 24){
+var hostname = "magi-" + i;
+killall(hostname);
+deleteServer(hostname);
+i = i+1;
+
+}
