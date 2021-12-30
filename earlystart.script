@@ -1,0 +1,17 @@
+var servs0 =      [
+                    "foodnstuff",
+                    "sigma-cosmetics",
+                    "joesguns",
+                    "nectar-net",
+                    "hong-fang-tea",
+                    "harakiri-sushi"
+                    ];
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+for (var i = 0; i < servs0.length; ++i) {
+    var serv = servs0[i];
+
+    scp("1337.script", serv);
+    nuke(serv);
+    exec("1337.script", serv, 6);
+}
