@@ -1,17 +1,28 @@
 // This script targets any server in targetlist for hacking. It will crack those in the target list, then set up all
-//other servers in the servs list to hack those servers. x0...4.js should be your hack/grow/weaken script.
+//other servers in the servs list to hack those servers. x0++.js should be your hack/grow/weaken scripts.
 
 // Divider variable. Integer value should equal the number of targets in the targetlist.
 var div = 7;
+var hacklvl = 316; //current Hack level so script does not target/use servers you cannot gain root on.
+//memory dividers need to be adjusted so the script divides into the available ram evenly. General rule is available 
+//ram/script cost, but it does not always divide evenly.
+var pmemdiv = 2.45; //private server ram divider
+var hmemdiv = 2.45; //home computer ram divider
+var memdiv = 2.48; //public server ram divider
+
+
+
 
 // servers with very high amounts of money. good for hacking. Set div to the number of objects in this list.
-var targetlist = ["phantasy",
-    "the-hub",
-    "iron-gym",
-    "silver-helix",
+var targetlist = [
     "joesguns",
-    "neo-net",
-    "zer0"]
+    "the-hub",
+    "harakiri-sushi",
+    "silver-helix",
+    "zer0",
+    "iron-gym",
+    "phantasy"
+]
 
 //list of slave public servers with useable ram
 
@@ -53,129 +64,105 @@ var servs = [
     "omnitek",
     "blade",
     "fulcrumtech",
-    "helios"
-];
-
-//home computer and list of private servers
-var pservs = [
-    //    "home",
-    "magi-0",
-    "magi-1",
-    "magi-2",
-    "magi-3",
-    "magi-4",
-    "magi-5",
-    "magi-6",
-    "magi-7",
-    "magi-8",
-    "magi-9",
-    "magi-10",
-    "magi-11",
-    "magi-12",
-    "magi-13",
-    "magi-14",
-    "magi-15",
-    "magi-16",
-    "magi-17",
-    "magi-18",
-    "magi-19",
-    "magi-20",
-    "magi-21",
-    "magi-22",
-    "magi-23",
-    "magi-24",
+    "helios",
+    "stormtech"
 ]
 
-var home = ["home"]
-
-var i = 0;
-var j = 0;
-var hacklvl = 1100; //current Hack level so script does not target servers you cannot gain root
 
 //crack the 5 target servers
 
 for (var i = 0; i < targetlist.length; ++i) {
     var tserv = targetlist[i];
 
-    if(!hasRootAccess(tserv)){
-    brutessh(tserv);
-    ftpcrack(tserv);
-    httpworm(tserv);
-    relaysmtp(tserv);
-    sqlinject(tserv);
-    nuke(tserv);
+    if (!hasRootAccess(tserv)) {
+        for (var n = 0; getServerRequiredHackingLevel(tserv) < hacklvl; ++n) {
+
+            brutessh(tserv);
+            ftpcrack(tserv);
+            httpworm(tserv);
+            relaysmtp(tserv);
+            nuke(tserv);
+            scp("x" + i + ".js", tserv);
+            exec("x" + i + ".js", tserv, threads);
+
+        }
     }
+
 }
+
 //code to kill all running scripts on all player servers
-for (var i = 0; i < pservs.length; ++i) {
-    var pserv = pservs[i];
+for (var int = 0; int < 25; ++int) {
+    var pserv = "magi-" + int;
     killall(pserv);
 }
 
 //code to kill all running scripts on all public servers
 
-for (var i = 0; i < servs.length; ++i) {
-    var serv = servs[i];
+for (var j = 0; j < servs.length; ++j) {
+    var serv = servs[j];
     killall(serv);
 }
 
 
 //setup home
-///////////
-for (var i = 0; i < home.length; ++i) {
-    var hserv = home[i];
-    var maxram = getServerMaxRam(home);
-    var threads = (maxram / div) / 3;
-    
-    for(var int = 0; int < div; ++int){
-    scriptKill("x" + int + ".js", hserv);
-    scp("x" + int + ".js", hserv);
-    exec("x" + int + ".js", hserv, threads);
-    }
+
+
+var hserv = "home";
+var maxram = getServerMaxRam(hserv);
+var threads = (maxram / div) / hmemdiv;
+
+for (var x = 0; x < div; ++x) {
+    scriptKill("x" + x + ".js", hserv);
+    scp("x" + x + ".js", hserv);
+    exec("x" + x + ".js", hserv, threads);
 
 }
 
-
-//code to start copying x scripts to hack chosen targets, on player servers.
+//copy and run hack script on public servers
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-for (var i = 0; i < pservs.length; ++i) {
-    var pserv = pservs[i];
-    var maxram = getServerMaxRam(pserv);
-    var threads = (maxram / div) / 2.45;
-    
-    for(var int = 0; int < div; ++int){
-    scp("x" + int + ".js", pserv);
-    exec("x" + int + ".js", pserv, threads);
-    }
-
-}
-
-//copy and run hack script on other servers
-////////////////////////////////////////////////////////////////////////////////////////////////
-//resetting variables i and j.
-
-
-for (var j = 0; j < servs.length; ++j) {
+for (j = 0; j < servs.length; ++j) {
     var serv = servs[j];
     var maxram = getServerMaxRam(serv);
-    var threads = (maxram / div)/2.5;
+    var threads = (maxram / div) / memdiv;
 
-if(getServerRequiredHackingLevel(serv) < hacklvl){
-    brutessh(serv);
-    ftpcrack(serv);
-    httpworm(serv);
-    relaysmtp(serv);
-    sqlinject(serv);
-    nuke(serv);
-    
-    for(var int = 0; int < div; ++int){
-    scp("x" + int + ".js", serv);
-    exec("x" + int + ".js", serv, threads);
+    if (!hasRootAccess(serv) && getServerMaxRam(serv) > 0 && getServerRequiredHackingLevel(serv) < hacklvl) {
+
+
+        brutessh(serv);
+        ftpcrack(serv);
+        httpworm(serv);
+        relaysmtp(serv);
+        sqlinject(serv);
+        nuke(serv);
+        scp("x" + j + ".js", serv);
+        exec("x" + j + ".js", serv, threads);
+
+    } else if (hasRootAccess(serv) && getServerMaxRam(serv) > 0) {
+        for (var z = 0; z < div; ++z) {
+            scp("x" + z + ".js", serv);
+            exec("x" + z + ".js", serv, threads);
+        }
+
     }
 }
 
 
+//code to start copying x scripts to hack chosen targets, on private servers.
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+for (var int = 0; int < 25; ++int) {
+    var pserv = "magi-" + int;
+    var maxram = getServerMaxRam(pserv);
+    var threads = (maxram / div) / pmemdiv;
+
+    for (var z = 0; z < div; ++z) {
+        scp("x" + z + ".js", pserv);
+        exec("x" + z + ".js", pserv, threads);
+    }
 }
+
+
+
+
