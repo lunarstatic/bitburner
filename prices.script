@@ -15,9 +15,9 @@ var ramcost = [];
 
 ramcost.push(gblevels.pop());
 
-tprint("Cost for " + ramcost + "gb server: $");
-tprint("$" + getPurchasedServerCost(ramcost) + " x1");
-tprint("$" + getPurchasedServerCost(ramcost)*25 + " x25");
+tprint("Cost for " + ramcost + "gb server: ");
+tprint("$" + nFormat(getPurchasedServerCost(ramcost), '0,0') + " x1");
+tprint("$" + nFormat(getPurchasedServerCost(ramcost)*25, '0,0')  + " x25");
 
 
 
