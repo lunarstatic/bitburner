@@ -1,4 +1,4 @@
-var target = "iron-gym";
+var target = "sigma-cosmetics";
 
 var moneyThresh = getServerMaxMoney(target) * 0.75;
 var securityThresh = getServerMinSecurityLevel(target) + 5;
