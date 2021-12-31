@@ -69,41 +69,6 @@ var servs = [
 ]
 
 
-//crack the 5 target servers
-/*
-for (var i = 0; i < targetlist.length; ++i) {
-    var tserv = targetlist[i];
-
-    if (!hasRootAccess(tserv) && getServerRequiredHackingLevel(tserv) < hacklvl) { //no root? crack the serv and root.
-
-
-        if (fileExists("BruteSSH.exe")) {
-            brutessh(tserv);
-        }
-        if (fileExists("FTPCrack.exe")) {
-            ftpcrack(tserv);
-        }
-        if (fileExists("HTTPWorm.exe")) {
-            httpworm(tserv);
-        }
-        if (fileExists("relaySMTP.exe")) {
-            relaysmtp(tserv);
-        }
-        if (fileExists("SQLInject.exe")) {
-            sqlinject(tserv);
-        }
-
-
-    }
-    nuke(tserv);
-    scp("x" + i + ".js", tserv);
-    exec("x" + i + ".js", tserv, threads);
-
-}
-
-*/
-
-
 //code to kill all running scripts on all public servers. steps through servs array.
 
 for (var j = 0; j < servs.length; ++j) {
@@ -166,7 +131,7 @@ for (j = 0; j < servs.length; ++j) {
     }
 }
 
-/*
+
 
 //code to kill all running scripts on all player servers. Assumes you have the max of 25 already.
 for (var int = 0; int < 25; ++int) {
@@ -187,6 +152,3 @@ for (var int = 0; int < 25; ++int) {
         exec("x" + z + ".js", pserv, threads);
     }
 }
-
-
-*/
