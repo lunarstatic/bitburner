@@ -1,9 +1,9 @@
 // This script targets any server in targetlist for hacking. It will crack those in the target list, then set up all
-//other servers in the servs list to hack those servers. x0++.js should be your hack/grow/weaken scripts.
+//available servers in the servs list to hack those servers. x0++.js should be your hack/grow/weaken scripts.
 
-// Divider variable. Integer value should equal the number of targets in the targetlist.
+// Script divider variable. Integer value should equal the number of targets in the targetlist. This is to dedicate equal portions of ram to each script running.
 var div = 7;
-var hacklvl = 316; //current Hack level so script does not target/use servers you cannot gain root on.
+var hacklvl = 350; //current Hack level so script does not target/use servers you cannot gain root on.
 //memory dividers need to be adjusted so the script divides into the available ram evenly. General rule is available 
 //ram/script cost, but it does not always divide evenly.
 var pmemdiv = 2.45; //private server ram divider
@@ -74,13 +74,25 @@ var servs = [
 for (var i = 0; i < targetlist.length; ++i) {
     var tserv = targetlist[i];
 
-    if (!hasRootAccess(tserv)) {
+    if (!hasRootAccess(tserv)) { //no root? crack the serv and root.
         for (var n = 0; getServerRequiredHackingLevel(tserv) < hacklvl; ++n) {
-
-            brutessh(tserv);
-            ftpcrack(tserv);
-            httpworm(tserv);
-            relaysmtp(tserv);
+            
+            if (fileExists("BruteSSH.exe")) {
+                brutessh(tserv);
+            }
+            if (fileExists("FTPCrack.exe")) {
+                ftpcrack(tserv);
+            }
+            if (fileExists("HTTPWorm.exe")) {
+                httpworm(tserv);
+            }
+            if (fileExists("relaySMTP.exe")) {
+                relaysmtp(tserv);
+            }
+            if (fileExists("SQLInject.exe")) {
+                sqlinject(tserv);
+            }
+            
             nuke(tserv);
             scp("x" + i + ".js", tserv);
             exec("x" + i + ".js", tserv, threads);
@@ -90,13 +102,13 @@ for (var i = 0; i < targetlist.length; ++i) {
 
 }
 
-//code to kill all running scripts on all player servers
+//code to kill all running scripts on all player servers. Assumes you have the max of 25 already.
 for (var int = 0; int < 25; ++int) {
     var pserv = "magi-" + int;
     killall(pserv);
 }
 
-//code to kill all running scripts on all public servers
+//code to kill all running scripts on all public servers. steps through servs array.
 
 for (var j = 0; j < servs.length; ++j) {
     var serv = servs[j];
@@ -127,19 +139,29 @@ for (j = 0; j < servs.length; ++j) {
     var maxram = getServerMaxRam(serv);
     var threads = (maxram / div) / memdiv;
 
-    if (!hasRootAccess(serv) && getServerMaxRam(serv) > 0 && getServerRequiredHackingLevel(serv) < hacklvl) {
+    if (!hasRootAccess(serv) && getServerMaxRam(serv) > 0 && getServerRequiredHackingLevel(serv) < hacklvl) { //make sure you can hack this server if you haven't already
 
+        if (fileExists("BruteSSH.exe")) {
+            brutessh(tserv);
+        }
+        if (fileExists("FTPCrack.exe")) {
+            ftpcrack(tserv);
+        }
+        if (fileExists("HTTPWorm.exe")) {
+            httpworm(tserv);
+        }
+        if (fileExists("relaySMTP.exe")) {
+            relaysmtp(tserv);
+        }
+        if (fileExists("SQLInject.exe")) {
+            sqlinject(tserv);
+        }
 
-        brutessh(serv);
-        ftpcrack(serv);
-        httpworm(serv);
-        relaysmtp(serv);
-        sqlinject(serv);
         nuke(serv);
         scp("x" + j + ".js", serv);
         exec("x" + j + ".js", serv, threads);
 
-    } else if (hasRootAccess(serv) && getServerMaxRam(serv) > 0) {
+    } else if (hasRootAccess(serv) && getServerMaxRam(serv) > 0) { //already root? install and run scripts if the server has more than 0gb of ram.
         for (var z = 0; z < div; ++z) {
             scp("x" + z + ".js", serv);
             exec("x" + z + ".js", serv, threads);
