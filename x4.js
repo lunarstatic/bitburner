@@ -11,24 +11,25 @@ export async function main(ns) {
         var moneyThresh = ns.getServerMaxMoney(target) * 0.75;
         var securityThresh = ns.getServerMinSecurityLevel(target) + 5;
 
+        if (!ns.hasRootAccess(target) && ns.getServerMaxRam(target) > 0 && ns.getServerRequiredHackingLevel(target) < hacklvl) {
+            if (ns.fileExists("BruteSSH.exe")) {
+                ns.brutessh(target);
+            }
+            if (ns.fileExists("FTPCrack.exe")) {
+                ns.ftpcrack(target);
+            }
+            if (ns.fileExists("HTTPWorm.exe")) {
+                ns.httpworm(target);
+            }
+            if (ns.fileExists("relaySMTP.exe")) {
+                ns.relaysmtp(target);
+            }
+            if (ns.fileExists("SQLInject.exe")) {
+                ns.sqlinject(target);
+            }
 
-        if (ns.fileExists("BruteSSH.exe")) {
-            ns.brutessh(target);
+            ns.nuke(target);
         }
-        if (ns.fileExists("FTPCrack.exe")) {
-            ns.ftpcrack(target);
-        }
-        if (ns.fileExists("HTTPWorm.exe")) {
-            ns.httpworm(target);
-        }
-        if (ns.fileExists("relaySMTP.exe")) {
-            ns.relaysmtp(target);
-        }
-        if (ns.fileExists("SQLInject.exe")) {
-            ns.sqlinject(target);
-        }
-
-        ns.nuke(target);
     }
 
     var tservs = ns.read("targs.txt").split('",\r\n"');
