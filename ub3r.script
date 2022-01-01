@@ -1,9 +1,9 @@
 // This script targets any server in targetlist for hacking. It will crack those in the target list, then set up all
 //available servers in the servs list to hack those servers. x0++.js should be your hack/grow/weaken scripts.
-tail("ub3r.script");
+tail("ub3r.script"); //monitor script progress
 // Script divider variable. Integer value should equal the number of targets in the targetlist. This is to dedicate equal portions of ram to each script running.
 var div = 7;
-var hacklvl = 352; //current Hack level so script does not target/use servers you cannot gain root on.
+var hacklvl = getHackingLevel(); //current Hack level so script does not target/use servers you cannot gain root on.
 //memory dividers need to be adjusted so the script divides into the available ram evenly. General rule is available 
 //ram/script cost, but it does not always divide evenly.
 var pmemdiv = 2.85; //private server ram divider
