@@ -11,9 +11,9 @@ export async function main(ns) {
 	var hacklvl = ns.getHackingLevel(); //current Hack level so script does not target/use servers you cannot gain root on.
 	//memory dividers need to be adjusted so the script divides into the available ram evenly. General rule is available 
 	//ram/script cost, but it does not always divide evenly.
-	var pmemdiv = 2.85; //private server ram divider
-	var hmemdiv = 2.85; //home computer ram divider
-	var memdiv = 2.85; //public server ram divider
+	var pmemdiv = 3.00; //private server ram divider
+	var hmemdiv = 3.00; //home computer ram divider
+	var memdiv = 3.00; //public server ram divider
 
 
 	ns.tail("bl173.js"); //monitor script progress
@@ -70,12 +70,15 @@ export async function main(ns) {
 				ns.sqlinject(serv);
 			} else (ns.tprint("SQLInject.exe does not exist."));
 
-			ns.nuke(serv);
+			if (!ns.hasRootAccess(serv) && ns.getServerMaxRam(serv) > 0 && ns.getServerRequiredHackingLevel(serv) < hacklvl) {
+				ns.nuke(serv);
+			}
+
+			await ns.scp("servs.txt", serv);
+			await ns.scp("targs.txt", serv);
 
 			for (var a = 0; a < div; ++a) {
 				await ns.scp("x" + a + ".js", serv);
-				await ns.scp("servs.txt", serv);
-				await ns.scp("targs.txt", serv);
 				ns.exec("x" + a + ".js", serv, threads);
 			}
 		}
@@ -93,11 +96,14 @@ export async function main(ns) {
 				await ns.scp("x" + o + ".js", serv);
 				await ns.scp("servs.txt", serv);
 				await ns.scp("targs.txt", serv);
-				ns.exec("x" + o + ".js", serv, threads); ////code fucking up invalid thread count = 0
+				ns.exec("x" + o + ".js", serv, threads); 
 			}
 
 		}
 	}
+
+
+
 
 	//code to kill all running scripts on all player servers. Assumes you have the max of 25 already.
 	for (var int = 0; int < 25; ++int) {
@@ -105,7 +111,7 @@ export async function main(ns) {
 		ns.killall(pserv);
 	}
 
-	//code to start copying x scripts to hack chosen targets, on private servers.
+	//code to start copying hack scripts to private servers.
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	for (var int = 0; int < 25; ++int) {
@@ -120,4 +126,7 @@ export async function main(ns) {
 			ns.exec("x" + z + ".js", pserv, threads);
 		}
 	}
+
+
+
 }
