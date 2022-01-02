@@ -1,10 +1,54 @@
-var target = "sigma-cosmetics";
-
+var target = "n00dles";
+var hacklvl = getHackingLevel();
 var moneyThresh = getServerMaxMoney(target) * 0.75;
 var securityThresh = getServerMinSecurityLevel(target) + 5;
 
 
-while (true) {
+var execount = 0;
+if (fileExists("BruteSSH.exe")) {
+    ++execount
+}
+if (fileExists("FTPCrack.exe")) {
+    ++execount
+}
+if (fileExists("HTTPWorm.exe")) {
+    ++execount
+}
+if (fileExists("relaySMTP.exe")) {
+    ++execount
+}
+if (fileExists("SQLInject.exe")) {
+    ++execount
+}
+
+tprint("You have " + execount + " port openers.");
+
+if (!hasRootAccess(target) && getServerRequiredHackingLevel(target) <= hacklvl) { //no root? crack the serv and root.
+
+    if (fileExists("BruteSSH.exe")) {
+        brutessh(target);
+    }
+    if (fileExists("FTPCrack.exe")) {
+        ftpcrack(target);
+    }
+    if (fileExists("HTTPWorm.exe")) {
+        httpworm(target);
+    }
+    if (fileExists("relaySMTP.exe")) {
+        relaysmtp(target);
+    }
+    if (fileExists("SQLInject.exe")) {
+        sqlinject(target);
+    }
+
+    if (getServerNumPortsRequired(target) <= execount) {
+        nuke(target);
+    } else (tprint("Cannot NUKE " + target + " : Cannot open the needed # of ports."))
+}
+
+
+
+while (hasRootAccess(target)) {
 
     if (getServerSecurityLevel(target) > securityThresh) {
 
@@ -16,5 +60,5 @@ while (true) {
 
         hack(target);
     }
-    
+
 }
