@@ -7,11 +7,13 @@ var servs0 =      [
                     "harakiri-sushi"
                     ];
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 for (var i = 0; i < servs0.length; ++i) {
     var serv = servs0[i];
-
+    var maxram = getServerMaxRam(serv);
+    killall(serv);
     scp("1337.script", serv);
     nuke(serv);
-    exec("1337.script", serv, 6);
+    exec("1337.script", serv, maxram/3.1);
 }
