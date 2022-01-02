@@ -66,7 +66,7 @@ export async function main(ns) {
 		var target = tservs[i].split('",');
 		ns.tprint("Target: " + target);
 
-		if (!ns.hasRootAccess(target) && ns.getServerRequiredHackingLevel(target) < hacklvl) {
+		if (!ns.hasRootAccess(target) && ns.getServerRequiredHackingLevel(target) <= hacklvl) {
 			if (ns.fileExists("BruteSSH.exe")) {
 				ns.brutessh(target);
 			}
@@ -101,7 +101,7 @@ export async function main(ns) {
 	var servs = ns.read("servs.txt").split('",\r\n"');
 	for (var j = 1; j < servs.length - 1; ++j) {
 		var serv = servs[j].split('",');
-		if (!ns.hasRootAccess(serv) && ns.getServerRequiredHackingLevel(serv) < hacklvl) { //make sure you can hack this server if you haven't already
+		if (!ns.hasRootAccess(serv) && ns.getServerRequiredHackingLevel(serv) <= hacklvl) { //make sure you can hack this server if you haven't already
 
 			if (ns.fileExists("BruteSSH.exe")) {
 				ns.brutessh(serv);
