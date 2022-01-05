@@ -15,16 +15,8 @@ export async function main(ns) {
 	var hmemdiv = 2.45; //home computer ram divider
 	var memdiv = 2.45; //public server ram divider
 
-
 	ns.tail("bl173.js"); //monitor script progress
-
-
-
 	///////////////////////////////////////////////////////////////////////////////
-
-
-
-
 	//setup home
 
 	var hserv = "home";
@@ -36,9 +28,6 @@ export async function main(ns) {
 		ns.exec("x" + x + ".js", hserv, threads);
 
 	}
-
-
-
 
 	//count how many exes we have
 	var execount = 0;
@@ -144,10 +133,6 @@ export async function main(ns) {
 
 		}
 	}
-
-
-
-
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////
