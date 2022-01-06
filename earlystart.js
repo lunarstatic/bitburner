@@ -11,10 +11,10 @@ export async function main(ns) {
 	var hacklvl = ns.getHackingLevel(); //current Hack level so script does not target/use servers you cannot gain root on.
 	//memory dividers need to be adjusted so the script divides into the available ram evenly. General rule is available 
 	//ram/script cost, but it does not always divide evenly.
-	var pmemdiv = 3.1; //private server ram divider
-	var hmemdiv = 3.1; //home computer ram divider
-	var memdiv = 3.1; //public server ram divider
-
+	var pmemdiv = 2.6; //private server ram divider
+	var hmemdiv = 2.6; //home computer ram divider
+	var memdiv = 2.6; //public server ram divider
+	var target = "phantasy";
 
 	ns.tail("earlystart.js"); //monitor script progress
 
@@ -29,15 +29,16 @@ export async function main(ns) {
 
 	var hserv = "home";
 	var maxram = ns.getServerMaxRam(hserv);
-	var threads = (maxram / div) / hmemdiv;
+	var usedram = ns.getServerUsedRam(hserv);
+	var availram = maxram - usedram;
+	var threads = (availram / div) / hmemdiv;
+
 
 	for (var x = 0; x < div; ++x) {
-		ns.scriptKill("1337.script", hserv);
-		ns.exec("1337.script", hserv, threads);
+		ns.scriptKill("1337.js", hserv);
+		ns.exec("1337.js", hserv, threads, target);
 
 	}
-
-
 
 
 	//count how many exes we have
@@ -60,48 +61,20 @@ export async function main(ns) {
 
 	ns.tprint("You have " + execount + " port openers."); //How many exe's do I have?
 
-	//crack target servers
-	var tservs = ns.read("targs.txt").split('",\r\n"');
-	for (var i = 1; i < tservs.length - 1; ++i) {
-		var target = tservs[i].split('",');
-		ns.tprint("Target: " + target);
-
-		if (!ns.hasRootAccess(target) && ns.getServerRequiredHackingLevel(target) <= hacklvl) {
-			if (ns.fileExists("BruteSSH.exe")) {
-				ns.brutessh(target);
-			}
-			if (ns.fileExists("FTPCrack.exe")) {
-				ns.ftpcrack(target);
-			}
-			if (ns.fileExists("HTTPWorm.exe")) {
-				ns.httpworm(target);
-			}
-			if (ns.fileExists("relaySMTP.exe")) {
-				ns.relaysmtp(target);
-			}
-			if (ns.fileExists("SQLInject.exe")) {
-				ns.sqlinject(target);
-			}
-			if (ns.getServerNumPortsRequired(target) <= execount) {
-				ns.nuke(target);
-			} else (ns.tprint("Cannot NUKE " + target + " : Cannot open the needed # of ports."))
-		}
-	}
-
 
 	//code to kill all running scripts on all public servers. steps through servs.txt.
 
 	var servs = ns.read("servs.txt").split('",\r\n"');
 	for (var e = 1; e < servs.length - 1; ++e) {
 		var serv = servs[e].split('",');
-		ns.killall(serv);
+		ns.scriptKill("1337.js", serv);
 	}
 	//crack slave public servers
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	var servs = ns.read("servs.txt").split('",\r\n"');
 	for (var j = 1; j < servs.length - 1; ++j) {
 		var serv = servs[j].split('",');
-		if (!ns.hasRootAccess(serv) && ns.getServerRequiredHackingLevel(serv) <= hacklvl) { //make sure you can hack this server if you haven't already
+		if (!ns.hasRootAccess(serv)) { //make sure you can hack this server if you haven't already
 
 			if (ns.fileExists("BruteSSH.exe")) {
 				ns.brutessh(serv);
@@ -121,7 +94,7 @@ export async function main(ns) {
 
 			if (ns.getServerNumPortsRequired(serv) <= execount) {
 				ns.nuke(serv);
-			} else (ns.tprint("Cannot NUKE " + target + " : Cannot open the needed # of ports."))
+			} else (ns.tprint("Cannot NUKE " + serv + " : Cannot open the needed # of ports."))
 		}
 	}
 
@@ -131,17 +104,16 @@ export async function main(ns) {
 
 		var serv = servs[z].split('",');
 		var maxram = ns.getServerMaxRam(serv);
-		var threads = (maxram / div) / memdiv;
+		var usedram = ns.getServerUsedRam(serv);
+		var availram = maxram - usedram;
+		var threads = (availram / div) / memdiv;
 
 		await ns.scp("servs.txt", serv);
-		await ns.scp("targs.txt", serv);
 
-		if (ns.hasRootAccess(serv) && ns.getServerMaxRam(serv) > 0) { //already root? install and run scripts if the server has more than 0gb of ram.
-			for (var o = 0; o < div; ++o) {
-				await ns.scp("1337.script", serv);
-				ns.exec("1337.script", serv, threads);
-			}
+		if (ns.hasRootAccess(serv) && ns.getServerMaxRam(serv) > 0 && ns.getServerRequiredHackingLevel(serv) <= hacklvl) { //already root? install and run scripts if the server has more than 0gb of ram.
 
+			await ns.scp("1337.js", serv);
+			ns.exec("1337.js", serv, threads, target);
 		}
 	}
 
@@ -165,7 +137,7 @@ export async function main(ns) {
 		var pservs = ns.getPurchasedServers();
 		for (var int = 0; int < pservs.length; ++int) {
 			var pserv = "magi-" + int;
-			ns.killall(pserv);
+			ns.scriptKill("1337.js", pserv);
 		}
 
 		//code to start copying hack scripts to private servers.
@@ -174,15 +146,16 @@ export async function main(ns) {
 		var pservs = ns.getPurchasedServers();
 		for (var int = 0; int < pservs.length; ++int) {
 
-			var pserv = "magi-" + int;
+			var pserv = pservs[int];
 			var maxram = ns.getServerMaxRam(pserv);
-			var threads = (maxram / div) / pmemdiv;
+			var usedram = ns.getServerUsedRam(pserv);
+			var availram = maxram - usedram;
+			var threads = (availram / div) / pmemdiv;
 
 			for (var z = 0; z < div; ++z) {
-				await ns.scp("1337.script", pserv);
+				await ns.scp("1337.js", pserv);
 				await ns.scp("servs.txt", pserv);
-				await ns.scp("targs.txt", pserv);
-				ns.exec("1337.script", pserv, threads);
+				ns.exec("1337.js", pserv, threads, target);
 			}
 		}
 	} else (ns.tprint("NO PRIV SERVS PURCHASED"))
