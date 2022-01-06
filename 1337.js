@@ -1,7 +1,7 @@
 /** @param {NS} ns **/
 export async function main(ns) {
 	var target = ns.args[0];
-	var hacklvl = ns.getHackingLevel();
+
 	var moneyThresh = ns.getServerMaxMoney(target) * 0.75;
 	var securityThresh = ns.getServerMinSecurityLevel(target) + 5;
 
