@@ -11,9 +11,13 @@ export async function main(ns) {
 	var hacklvl = ns.getHackingLevel(); //current Hack level so script does not target/use servers you cannot gain root on.
 	//memory dividers need to be adjusted so the script divides into the available ram evenly. General rule is available 
 	//ram/script cost, but it does not always divide evenly.
-	var pmemdiv = 2.45; //private server ram divider
-	var hmemdiv = 2.45; //home computer ram divider
-	var memdiv = 2.45; //public server ram divider
+	var hackscript = "x.js";
+	var pmemdiv = ns.getScriptRam(hackscript); //private server ram divider
+	var hmemdiv = ns.getScriptRam(hackscript); //home computer ram divider
+	var memdiv = ns.getScriptRam(hackscript); //public server ram divider
+	var tfile = "targs2.txt";
+	var sfile = "servs.txt";
+
 
 	ns.tail("bl173.js"); //monitor script progress
 	///////////////////////////////////////////////////////////////////////////////
@@ -21,11 +25,20 @@ export async function main(ns) {
 
 	var hserv = "home";
 	var maxram = ns.getServerMaxRam(hserv);
-	var threads = (maxram / div) / hmemdiv;
+	var usedram = ns.getServerUsedRam(hserv);
+	var availram = maxram - usedram;
+	var threads = (availram / div) / hmemdiv;
 
-	for (var x = 0; x < div; ++x) {
-		ns.scriptKill("x" + x + ".js", hserv);
-		ns.exec("x" + x + ".js", hserv, threads);
+
+	ns.scriptKill(hackscript, hserv);
+	var tservs = ns.read(tfile).split('",\r\n"');
+	for (var i = 1; i < tservs.length - 1; ++i) {
+		var t1 = tservs[i].split('",');
+		var target = t1.toString();
+
+
+		ns.tprint(target);
+		ns.exec(hackscript, hserv, threads, target);
 
 	}
 
@@ -50,7 +63,7 @@ export async function main(ns) {
 	ns.tprint("You have " + execount + " port openers."); //How many exe's do I have?
 
 	//crack target servers
-	var tservs = ns.read("targs.txt").split('",\r\n"');
+	var tservs = ns.read(tfile).split('",\r\n"');
 	for (var i = 1; i < tservs.length - 1; ++i) {
 		var target = tservs[i].split('",');
 		ns.tprint("Target: " + target);
@@ -80,14 +93,14 @@ export async function main(ns) {
 
 	//code to kill all running scripts on all public servers. steps through servs.txt.
 
-	var servs = ns.read("servs.txt").split('",\r\n"');
+	var servs = ns.read(sfile).split('",\r\n"');
 	for (var e = 1; e < servs.length - 1; ++e) {
 		var serv = servs[e].split('",');
 		ns.killall(serv);
 	}
 	//crack slave public servers
 	////////////////////////////////////////////////////////////////////////////////////////////////
-	var servs = ns.read("servs.txt").split('",\r\n"');
+	var servs = ns.read(sfile).split('",\r\n"');
 	for (var j = 1; j < servs.length - 1; ++j) {
 		var serv = servs[j].split('",');
 		if (!ns.hasRootAccess(serv) && ns.getServerRequiredHackingLevel(serv) <= hacklvl) { //make sure you can hack this server if you haven't already
@@ -115,20 +128,31 @@ export async function main(ns) {
 	}
 
 	//copies and executes x scripts on servers in list
-	var servs = ns.read("servs.txt").split('",\r\n"');
+	var servs = ns.read(sfile).split('",\r\n"');
+	var tservs = ns.read(tfile).split('",\r\n"');
 	for (var z = 1; z < servs.length - 1; ++z) {
 
 		var serv = servs[z].split('",');
 		var maxram = ns.getServerMaxRam(serv);
-		var threads = (maxram / div) / memdiv;
+		var usedram = ns.getServerUsedRam(serv);
+		var availram = maxram - usedram;
+		var threads = (availram / div) / memdiv;
 
-		await ns.scp("servs.txt", serv);
-		await ns.scp("targs.txt", serv);
+
+
+		await ns.scp(sfile, serv);
+		await ns.scp(tfile, serv);
 
 		if (ns.hasRootAccess(serv) && ns.getServerMaxRam(serv) > 0) { //already root? install and run scripts if the server has more than 0gb of ram.
 			for (var o = 0; o < div; ++o) {
-				await ns.scp("x" + o + ".js", serv);
-				ns.exec("x" + o + ".js", serv, threads);
+
+				for (var i = 1; i < tservs.length - 1; ++i) {
+					var t1 = tservs[i].split('",');
+					var target = t1.toString();
+
+					await ns.scp(hackscript, serv);
+					ns.exec(hackscript, serv, threads, target);
+				}
 			}
 
 		}
@@ -149,7 +173,7 @@ export async function main(ns) {
 		//code to kill all running scripts on all player servers. Assumes you have the max of 25 already.
 		var pservs = ns.getPurchasedServers();
 		for (var int = 0; int < pservs.length; ++int) {
-			var pserv = "magi-" + int;
+			var pserv = pservs[int];
 			ns.killall(pserv);
 		}
 
@@ -159,15 +183,23 @@ export async function main(ns) {
 		var pservs = ns.getPurchasedServers();
 		for (var int = 0; int < pservs.length; ++int) {
 
-			var pserv = "magi-" + int;
+			var pserv = pservs[int];
 			var maxram = ns.getServerMaxRam(pserv);
-			var threads = (maxram / div) / pmemdiv;
+			var usedram = ns.getServerUsedRam(pserv);
+			var availram = maxram - usedram;
+			var threads = (availram / div) / pmemdiv;
 
 			for (var z = 0; z < div; ++z) {
-				await ns.scp("x" + z + ".js", pserv);
-				await ns.scp("servs.txt", pserv);
-				await ns.scp("targs.txt", pserv);
-				ns.exec("x" + z + ".js", pserv, threads);
+
+				for (var i = 1; i < tservs.length - 1; ++i) {
+					var t1 = tservs[i].split('",');
+					var target = t1.toString();
+
+					await ns.scp(hackscript, pserv);
+					await ns.scp(sfile, pserv);
+					await ns.scp(tfile, pserv);
+					ns.exec(hackscript, pserv, threads, target);
+				}
 			}
 		}
 	} else (ns.tprint("NO PRIV SERVS PURCHASED"))
