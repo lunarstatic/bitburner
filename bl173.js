@@ -2,7 +2,7 @@
 
 
 export async function main(ns) {
-
+	ns.tail("bl173.js"); //monitor script progress
 	// This script targets any server in targetlist for hacking. It will crack those in the target list, then set up all
 	//available servers in the servs list to hack those servers. x0++.js should be your hack/grow/weaken scripts.
 
@@ -15,32 +15,33 @@ export async function main(ns) {
 	var pmemdiv = ns.getScriptRam(hackscript); //private server ram divider
 	var hmemdiv = ns.getScriptRam(hackscript); //home computer ram divider
 	var memdiv = ns.getScriptRam(hackscript); //public server ram divider
-	var tfile = "targs2.txt";
+	var tfile = "targs.txt";
 	var sfile = "servs.txt";
 
 
-	ns.tail("bl173.js"); //monitor script progress
+
 	///////////////////////////////////////////////////////////////////////////////
 	//setup home
 
 	var hserv = "home";
+	ns.scriptKill(hackscript, hserv);
 	var maxram = ns.getServerMaxRam(hserv);
 	var usedram = ns.getServerUsedRam(hserv);
 	var availram = maxram - usedram;
 	var threads = (availram / div) / hmemdiv;
 
 
-	ns.scriptKill(hackscript, hserv);
+
 	var tservs = ns.read(tfile).split('",\r\n"');
 	for (var i = 1; i < tservs.length - 1; ++i) {
 		var t1 = tservs[i].split('",');
 		var target = t1.toString();
-
-
-		ns.tprint(target);
+		ns.tprint(target + " Max Money: " + ns.getServerMaxMoney(target));
 		ns.exec(hackscript, hserv, threads, target);
 
 	}
+
+
 
 	//count how many exes we have
 	var execount = 0;
@@ -203,5 +204,7 @@ export async function main(ns) {
 			}
 		}
 	} else (ns.tprint("NO PRIV SERVS PURCHASED"))
+
+	ns.toast("bl173 finished running!");
 
 }
