@@ -3,6 +3,7 @@ export async function main(ns) {
 	ns.tail("st.js");
 
 	var servs = [
+		"n00dles",
 		"foodnstuff",
 		"sigma-cosmetics",
 		"joesguns",
