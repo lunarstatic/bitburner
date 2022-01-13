@@ -59,6 +59,7 @@ export async function main(ns) {
 	var i = 0;
 	var f = 0;
 	var hacklvl = ns.getHackingLevel();
+	var script = "foodnstuff.script";
 
 	//count how many exes we have
 	var execount = 0;
@@ -109,9 +110,9 @@ export async function main(ns) {
 	//kill script then copy current version from home to each serv
 	for (i = 0; i < servs.length; ++i) {
 		var serv = servs[i].split('",');
-		ns.scriptKill("x.js", serv);
-		ns.tprint("Copying x.js to " + serv);
-		await ns.scp("x.js", home, serv);
+		ns.scriptKill(script, serv);
+		ns.tprint("Copying script to " + serv);
+		await ns.scp(script, home, serv);
 	}
 
 
@@ -121,19 +122,19 @@ export async function main(ns) {
 		//calc how many threads to run based on server max ram
 		var serv = servs[f].split('",');
 		var maxram = ns.getServerMaxRam(serv);
-		var memsc = ns.getScriptRam("x.js");
+		var memsc = ns.getScriptRam(script);
 		var threads = maxram / memsc;
 
 		ns.tprint("Enslaving " + serv);
-		ns.exec("x.js", serv, threads, targ);
+		ns.exec(script, serv, threads, targ);
 	}
 
 	//run x script on home server with room to run this script again
-	var hthreads = (ns.getServerMaxRam(home) - ns.getScriptRam("st.js")) / ns.getScriptRam("x.js");
-	if (ns.scriptRunning("x.js", home)) {
-		ns.scriptKill("x.js", home);
+	var hthreads = (ns.getServerMaxRam(home) - ns.getScriptRam(script)) / ns.getScriptRam(script);
+	if (ns.scriptRunning(script, home)) {
+		ns.scriptKill(script, home);
 	}
 
-	ns.exec("x.js", home, hthreads, targ)
+	ns.exec(script, home, hthreads, targ)
 	ns.tprint("Script running on home.");
 }
