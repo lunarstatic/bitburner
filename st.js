@@ -2,6 +2,14 @@
 export async function main(ns) {
 	ns.tail("st.js");
 
+	var home = "home";
+	var targ = "n00dles";
+	var i = 0;
+	var f = 0;
+	var hacklvl = ns.getHackingLevel();
+	var script = "lvl.js";
+
+
 	var servs = [
 		"n00dles",
 		"foodnstuff",
@@ -17,50 +25,38 @@ export async function main(ns) {
 		"phantasy",
 		"omega-net",
 		"the-hub",
-//		"lexo-corp",
-//		"microdyne",
-//		"unitalife",
-//		"silver-helix",
-//		"rho-construction",
-//		"netlink",
-//		"aevum-police",
-//		"summit-uni",
-//		"alpha-ent",
-//		"solaris",
-//		"run4theh111z",
-//		"millenium-fitness",
-//		"catalyst",
-//		"omnia",
-//		".",
+		"lexo-corp",
+		"microdyne",
+		"unitalife",
+		"silver-helix",
+		"rho-construction",
+		"netlink",
+		"aevum-police",
+		"summit-uni",
+		"alpha-ent",
+		"solaris",
+		"run4theh111z",
+		"millenium-fitness",
+		"catalyst",
+		"omnia",
+		".",
 		"avmnite-02h",
-//		"titan-labs",
-//		"zb-institute",
-//		"rothman-uni",
-//		"univ-energy",
+		"titan-labs",
+		"zb-institute",
+		"rothman-uni",
+		"univ-energy",
 		"I.I.I.I",
-//		"global-pharm",
-//		"omnitek",
-//		"blade",
-//		"fulcrumtech",
-//		"helios",
-//		"stormtech",
-//		"ecorp",
-//		"megacorp",
-//		"nwo",
-//		"kuai-gong",
-//		"deltaone",
-//		"zeus-med",
-//		"zb-def",
-//		"infocomm",
-//		"taiyang-digital",
+		"global-pharm",
+		"omnitek",
+		"blade",
+		"fulcrumtech",
+		"helios",
+		"stormtech",
+		"ecorp",
+		"megacorp",
+		"nwo",
 	]
 
-	var home = "home";
-	var targ = "foodnstuff";
-	var i = 0;
-	var f = 0;
-	var hacklvl = ns.getHackingLevel();
-	var script = "foodnstuff.script";
 
 	//count how many exes we have
 	var execount = 0;
@@ -108,6 +104,50 @@ export async function main(ns) {
 		}
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	var pcount = 0; //counter for private servers purchased as the for loops go through.
+	var pservs = ns.getPurchasedServers();
+	for (var r = 0; r < pservs.length; ++r) {
+		pcount = r + 1;
+	}
+
+	ns.tprint("You have " + pcount + " private servers.");
+
+
+	if (pcount > 0) {
+		//code to kill all running scripts on all player servers. Assumes you have the max of 25 already.
+		var pservs = ns.getPurchasedServers();
+		for (var int = 0; int < pservs.length; ++int) {
+			var pserv = pservs[int];
+			ns.killall(pserv);
+		}
+
+		//code to start copying hack scripts to private servers.
+		////////////////////////////////////////////////////////////////////////////////////////////////
+
+		var pservs = ns.getPurchasedServers();
+		for (var int = 0; int < pservs.length; ++int) {
+
+			var pserv = pservs[int];
+			var maxram = ns.getServerMaxRam(pserv);
+			var usedram = ns.getServerUsedRam(pserv);
+			var availram = maxram - usedram;
+			var threads = availram / ns.getScriptRam(script);
+
+
+			await ns.scp(script, pserv);
+			ns.exec(script, pserv, threads, targ);
+
+
+		}
+	} else (ns.tprint("NO PRIV SERVS PURCHASED"))
+
+
+
+
+
+
 	//kill script then copy current version from home to each serv
 	for (i = 0; i < servs.length; ++i) {
 		var serv = servs[i].split('",');
@@ -138,4 +178,48 @@ export async function main(ns) {
 
 	ns.exec(script, home, hthreads, targ)
 	ns.tprint("Script running on home.");
+
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	var pcount = 0; //counter for private servers purchased as the for loops go through.
+	var pservs = ns.getPurchasedServers();
+	for (var r = 0; r < pservs.length; ++r) {
+		pcount = r + 1;
+	}
+
+	ns.tprint("You have " + pcount + " private servers.");
+
+
+	if (pcount > 0) {
+		//code to kill all running scripts on all player servers. Assumes you have the max of 25 already.
+		var pservs = ns.getPurchasedServers();
+		for (var int = 0; int < pservs.length; ++int) {
+			var pserv = pservs[int];
+			ns.killall(pserv);
+		}
+
+		//code to start copying hack scripts to private servers.
+		////////////////////////////////////////////////////////////////////////////////////////////////
+
+		var pservs = ns.getPurchasedServers();
+		for (var int = 0; int < pservs.length; ++int) {
+
+			var pserv = pservs[int];
+			var maxram = ns.getServerMaxRam(pserv);
+			var usedram = ns.getServerUsedRam(pserv);
+			var availram = maxram - usedram;
+			var threads = availram / ns.getScriptRam(script);
+
+
+
+
+			await ns.scp(script, pserv);
+			ns.exec(script, pserv, threads, targ);
+
+
+		}
+	} else (ns.tprint("NO PRIV SERVS PURCHASED"))
+
+
 }
