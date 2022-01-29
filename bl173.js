@@ -4,10 +4,10 @@
 export async function main(ns) {
 	ns.tail("bl173.js"); //monitor script progress
 	// This script targets any server in targetlist for hacking. It will crack those in the target list, then set up all
-	//available servers in the servs list to hack those servers. x0++.js should be your hack/grow/weaken scripts.
+	//available servers in the servs list to hack those servers. x.js should be your hack/grow/weaken scripts.
 
 	// Script divider variable. Integer value should equal the number of targets in the targetlist. This is to dedicate equal portions of ram to each script running.
-	var div = 7;
+	var div = 6;
 	var hacklvl = ns.getHackingLevel(); //current Hack level so script does not target/use servers you cannot gain root on.
 	//memory dividers need to be adjusted so the script divides into the available ram evenly. General rule is available 
 	//ram/script cost, but it does not always divide evenly.
@@ -15,7 +15,7 @@ export async function main(ns) {
 	var pmemdiv = ns.getScriptRam(hackscript); //private server ram divider
 	var hmemdiv = ns.getScriptRam(hackscript); //home computer ram divider
 	var memdiv = ns.getScriptRam(hackscript); //public server ram divider
-	var tfile = "targs.txt";
+	var tfile = "targs3.txt";
 	var sfile = "servs.txt";
 
 
@@ -36,7 +36,7 @@ export async function main(ns) {
 	for (var i = 1; i < tservs.length - 1; ++i) {
 		var t1 = tservs[i].split('",');
 		var target = t1.toString();
-		ns.tprint(target + " Max Money: " + ns.getServerMaxMoney(target));
+		ns.tprint("Target " + target + " Max Money: $" + ns.nFormat(ns.getServerMaxMoney(target), '0,0'));
 		ns.exec(hackscript, hserv, threads, target);
 
 	}
@@ -67,7 +67,7 @@ export async function main(ns) {
 	var tservs = ns.read(tfile).split('",\r\n"');
 	for (var i = 1; i < tservs.length - 1; ++i) {
 		var target = tservs[i].split('",');
-		ns.tprint("Target: " + target);
+//		ns.tprint("Target: " + target);
 
 		if (!ns.hasRootAccess(target) && ns.getServerRequiredHackingLevel(target) <= hacklvl) {
 			if (ns.fileExists("BruteSSH.exe")) {
