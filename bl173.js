@@ -7,7 +7,7 @@ export async function main(ns) {
 	//available servers in the servs list to hack those servers. x.js should be your hack/grow/weaken scripts.
 
 	// Script divider variable. Integer value should equal the number of targets in the targetlist. This is to dedicate equal portions of ram to each script running.
-	var div = 6;
+
 	var hacklvl = ns.getHackingLevel(); //current Hack level so script does not target/use servers you cannot gain root on.
 	//memory dividers need to be adjusted so the script divides into the available ram evenly. General rule is available 
 	//ram/script cost, but it does not always divide evenly.
@@ -15,11 +15,16 @@ export async function main(ns) {
 	var pmemdiv = ns.getScriptRam(hackscript); //private server ram divider
 	var hmemdiv = ns.getScriptRam(hackscript); //home computer ram divider
 	var memdiv = ns.getScriptRam(hackscript); //public server ram divider
-	var tfile = "targs3.txt";
+	var tfile = "targs.txt";
 	var sfile = "servs.txt";
 
-
-
+////////// Sets divider variable automatically based on number of targets in txt.
+	var div = 0;
+	var filect = ns.read(tfile).split('",\r\n"');
+	for (var ee = 1; ee < filect.length - 1; ++ee) {
+		div++;
+	}
+	ns.tprint(div);
 	///////////////////////////////////////////////////////////////////////////////
 	//setup home
 
@@ -67,7 +72,7 @@ export async function main(ns) {
 	var tservs = ns.read(tfile).split('",\r\n"');
 	for (var i = 1; i < tservs.length - 1; ++i) {
 		var target = tservs[i].split('",');
-//		ns.tprint("Target: " + target);
+		//		ns.tprint("Target: " + target);
 
 		if (!ns.hasRootAccess(target) && ns.getServerRequiredHackingLevel(target) <= hacklvl) {
 			if (ns.fileExists("BruteSSH.exe")) {
@@ -158,6 +163,8 @@ export async function main(ns) {
 
 		}
 	}
+
+
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////////
